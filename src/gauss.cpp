@@ -80,25 +80,24 @@ void input(const char* filename) {
     /* read one line each time */
     char buffer[LINE_BUFFER_SIZE];
     //Line line;
-    int line = 0;
+    size = 0;
     while (fgets(buffer, LINE_BUFFER_SIZE, file) != NULL) {
         //printf("|%s|\n", buffer);
         int len = strlen(buffer);
+        int line = 0;
         //line.clear();
-        size = 0;
         for (int i = 0, j = 0; i < len; ++i) {
             if (!isdigit(buffer[i]) && buffer[i] != '.' && buffer[i] != '-') {
                 buffer[i] = '\0';
-                det[line][size++] = atof(buffer + j);
+                det[line++][size] = atof(buffer + j);
                 //line.push_back(atof(buffer + j));
-                ++size;
                 while (i < len && !isdigit(buffer[i]) && buffer[i] != '-' && buffer[i] != '-') {
                     ++i;
                 }
                 j = i;
             }
         }
-        ++line;
+        ++size;
         //det.push_back(line);
     }
 #ifdef DEBUG
@@ -121,8 +120,10 @@ double gauss() {
         //选主元
         if (fabs(det[i][i]) < EPS) {
             for (int j = i + 1; j < size; ++j) {
-                if (fabs(det[j][i]) > EPS) {
-                    swap(det[i], det[j]);
+                if (fabs(det[i][j] > EPS)) {
+                    for (int k = i; k < size; ++k) {
+                        swap(det[k][i], det[k][j]);
+                    }
                     negtive = !negtive;
                     break;
                 }
@@ -135,12 +136,12 @@ double gauss() {
 
         //消元
         for (int j = i + 1; j < size; ++j) { //row j
-            if (fabs(det[j][i]) < EPS) {
+            if (fabs(det[i][j]) < EPS) {
                 continue; //already finish
             }
-            double times = -det[j][i] / det[i][i];
+            double times = -det[i][j] / det[i][i];
             for (int k = i; k < size; ++k) {
-                det[j][k] += det[i][k] * times;
+                det[k][j] += det[k][i] * times;
             }
         }
     }
