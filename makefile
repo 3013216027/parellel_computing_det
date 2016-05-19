@@ -3,7 +3,7 @@ CC=g++
 OPT=-Wall
 
 #源文件目录
-SRCDIR=src
+SRCDIR=src_bf
 #生成可执行文件目录
 OBJDIR=build
 #数据文件夹
@@ -17,9 +17,9 @@ parellel=gauss_mt
 gen=generator
 
 #数据规模(gen x gen的行列式)
-gen_size=256
+gen_size=8
 #数据范围(0~max-1的整数)
-gen_max=1007
+gen_max=107
 #产生的数据文件名
 gen_out=input.txt
 

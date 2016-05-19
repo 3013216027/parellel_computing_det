@@ -1,10 +1,10 @@
 /* **********************************************
 
-  File Name: gauss.cpp
+  File Name: gauss_mt.cpp
 
   Author: zhengdongjian@tju.edu.cn
 
-  Created Time: Sat, May 14, 2016 10:10:55 PM
+  Created Time: Tue, May 17, 2016  3:30:03 PM
 
 *********************************************** */
 #include <bits/stdc++.h>
@@ -154,6 +154,14 @@ bool vis_col[MAX]; //flag of if col[i] has been choosen.
 inline int pow1(int n) {
     return (n & 1) ? -1 : 1;
 }
+
+/**
+ * data struct for parellel computing
+ */
+
+double res[AR[MAX]]; //temporary result array
+
+int total 
 
 double gauss() {
     double res = 0.0, tmp;
