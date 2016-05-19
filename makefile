@@ -17,9 +17,9 @@ parellel=gauss_mt
 gen=generator
 
 #数据规模(gen x gen的行列式)
-gen_size=8
+gen_size=6
 #数据范围(0~max-1的整数)
-gen_max=107
+gen_max=3
 #产生的数据文件名
 gen_out=input.txt
 
@@ -58,6 +58,13 @@ generate: ${OBJDIR}/${gen}
 	@${OBJDIR}/${gen} ${gen_max} ${gen_size} > ${DATDIR}/${gen_out}
 	@echo -e 'OK!\n'
 	@sleep 0.3
+
+test:
+	@echo -e 'Serial<<<'
+	./${OBJDIR}/${serial} ${DATADIR}/${input}
+	@echo -e 'Parellel<<<'
+	./${OBJDIR}/${parellel} ${DATADIR}/${input}
+	@echo -e '---------------------'
 
 clean:
 	rm -rf *.out

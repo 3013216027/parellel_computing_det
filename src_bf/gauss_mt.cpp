@@ -9,6 +9,8 @@
 *********************************************** */
 #include <bits/stdc++.h>
 #include <sys/time.h>
+#include <pthread.h>
+#include <semaphore.h>
 using namespace std;
 
 /**
@@ -16,18 +18,30 @@ using namespace std;
  * complex: O(n^n)
  */
 enum ERROR {
-    DATA_BUFFER_OVERFLOW = 1;
+    DATA_BUFFER_OVERFLOW = 1
 };
 
 const int LINE_BUFFER_SIZE = 8192; /* each time read one line, with buffer 8k */
 const double EPS = 1e-6;
 const int MAX = 9; //max matrix size
-const static AR[MAX + 1] = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880/*, 3628800*/};
+const static int AR[MAX + 1] = {
+	1, //0!
+	1, //1!
+	2, //2!
+	6,
+	24,
+	120,
+	720,
+	5040,
+	40320,
+	362880/*,
+	3628800*/
+};
 
 double det[MAX][MAX];
 int size; //runtime matrix size
 
-int seq[AR[MAX]][MAX];
+int seq[362880 * MAX];
 int source[MAX];
 bool row_vis[MAX];
 int seq_size;
@@ -36,7 +50,7 @@ int seq_size;
  * [Func]input
  * parm filename: input file name
  */
-void input(const char* filename);
+int input(const char* filename);
 
 /**
  * [Func]gauss
@@ -51,17 +65,17 @@ double gauss();
 void dfs(int depth) {
     if (depth == size) {
         for (int i = 0; i < size; ++i) {
-            seq[seq_size][i] = source[i];
+            seq[seq_size * MAX + i] = source[i];
         }
         seq_size++;
         return;
     }
     for (int i = 0; i < size; ++i) {
-        if (!row_size[i]) {
-            row_size[i] = true;
+        if (!row_vis[i]) {
+            row_vis[i] = true;
             source[depth] = i;
             dfs(depth + 1);
-            row_size[i] = false;
+            row_vis[i] = false;
         }
     }
 }
@@ -146,6 +160,8 @@ int input(const char* filename) {
     }
 #endif
     fclose(file);
+
+	return 0; //no error
 }
 
 bool vis_col[MAX]; //flag of if col[i] has been choosen.
@@ -158,19 +174,54 @@ inline int pow1(int n) {
 /**
  * data struct for parellel computing
  */
+const int MAX_THREADS = 128;
+pthread_t threads[MAX_THREADS];
+int ids[MAX_THREADS]; //tell the specific thread his ID
+double res; //temporary parellel result array
+sem_t lock; //lock for res
+int total_threads = 1; // how much threads do we need?
+int total_of_each; // how much work for each thread?
 
-double res[AR[MAX]]; //temporary result array
+void* work(void* id) {
+	int me = *(int*)id; //my id
+	int start = me * total_of_each + 0;
+	int end = start + total_of_each; // [start, end)
+	if (end > seq_size) {
+		end = seq_size;
+	}
+	
+	double my_res = 0;
+	while (start++ < end) {
+		//do with seq_{start}
+		double tmp = 1.0;
+		for (int j = 0; j < size; ++j) {
+			tmp *= det[j][seq[start * MAX + j]];
+		}
+		my_res += tmp;
+	}
+	sem_wait(&lock); //P
+	res += my_res;
+	sem_post(&lock); //V
 
-int total 
+	return NULL;
+}
 
 double gauss() {
-    double res = 0.0, tmp;
-    for (int i = 0; i < seq_size; ++i) {
-        tmp = pow1(i);
-        for (int j = 0; j < size; ++j) {
-            tmp *= det[j][seq[i][j]];
-        }
-        res += tmp;
+	/* decide how much threads to work */
+	if (seq_size < total_threads) {
+		seq_size = total_threads;
+	}
+	//fix it
+	total_threads = 32;
+	total_threads = std::min(MAX_THREADS, total_threads);
+	total_of_each = (seq_size + total_threads - 1) / total_threads;
+	res = 0.0;
+    for (int i = 0; i < total_threads; ++i) {
+		ids[i] = i;
+		pthread_create(threads + i, NULL, work, (void*)(ids + i));
     }
+	for (int i = 0; i < total_threads; ++i) {
+		pthread_join(threads[i], NULL);
+	}
     return res;
 }

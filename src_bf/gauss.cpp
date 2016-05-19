@@ -16,18 +16,31 @@ using namespace std;
  * complex: O(n^n)
  */
 enum ERROR {
-    DATA_BUFFER_OVERFLOW = 1;
+    DATA_BUFFER_OVERFLOW = 1
 };
 
 const int LINE_BUFFER_SIZE = 8192; /* each time read one line, with buffer 8k */
 const double EPS = 1e-6;
 const int MAX = 9; //max matrix size
-const static AR[MAX + 1] = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880/*, 3628800*/};
+const static int AR[MAX + 1] = {
+	1, //0!
+	1, //1!
+	2, //2!
+	6,
+	24,
+	120,
+	720,
+	5040,
+	40320,
+	362880/*,
+	3628800*/
+};
 
 double det[MAX][MAX];
 int size; //runtime matrix size
 
-int seq[AR[MAX]][MAX];
+//int seq[AR[MAX]][MAX];
+int seq[362880][MAX];
 int source[MAX];
 bool row_vis[MAX];
 int seq_size;
@@ -36,7 +49,7 @@ int seq_size;
  * [Func]input
  * parm filename: input file name
  */
-void input(const char* filename);
+int input(const char* filename);
 
 /**
  * [Func]gauss
@@ -57,11 +70,11 @@ void dfs(int depth) {
         return;
     }
     for (int i = 0; i < size; ++i) {
-        if (!row_size[i]) {
-            row_size[i] = true;
+        if (!row_vis[i]) {
+            row_vis[i] = true;
             source[depth] = i;
             dfs(depth + 1);
-            row_size[i] = false;
+            row_vis[i] = false;
         }
     }
 }
@@ -146,6 +159,8 @@ int input(const char* filename) {
     }
 #endif
     fclose(file);
+
+	return 0; //no error
 }
 
 bool vis_col[MAX]; //flag of if col[i] has been choosen.
