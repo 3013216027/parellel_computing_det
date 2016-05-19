@@ -58,7 +58,7 @@ int input(const char* filename);
  * [Func]gauss
  * return: value of the det
  */
-double gauss(int num_thread = 128);
+double gauss(int num_thread = 8);
 
 /**
  * depth first search, get the number sequences
@@ -202,7 +202,7 @@ void* work(void* id) {
 	if (end > seq_size) {
 		end = seq_size;
 	}
-	
+
 	double my_res = 0;
 	while (start++ < end) {
 		//do with seq_{start}
