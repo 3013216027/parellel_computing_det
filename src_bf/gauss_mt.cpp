@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
 #ifdef TEST
     printf("result = %f\n", gauss(i)); /* 高斯消元 */
 #else
-    gauss(atoi(argv[2]));
+    fprintf(stderr, "result = %f\n", gauss(atoi(argv[2]))); /* 高斯消元 */
     //printf("result = %f\n", gauss(atoi(argv[2])); /* 高斯消元 */
 #endif
 

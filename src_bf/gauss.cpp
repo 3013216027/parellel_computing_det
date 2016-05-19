@@ -110,7 +110,7 @@ int main(int argc, char** argv) {
     generate();
     struct timeval begin, end;
     gettimeofday(&begin, NULL);
-    gauss(); //printf("result = %f\n", gauss()); /* 高斯消元 */
+    fprintf(stderr, "result = %f\n", gauss()); /* 高斯消元 */
 
     gettimeofday(&end, NULL);
     printf("%.2f\n", ((end.tv_sec - begin.tv_sec) * 1e6 + (end.tv_usec - begin.tv_usec)));
