@@ -1,0 +1,127 @@
+#!/bin/bash
+#################################################
+#  File Name: test.sh
+#  
+#  Author: zhengdongjian@tju.edu.cn
+#  
+#  Created Time: Thu, May 19, 2016 10:31:49 PM
+#  
+#################################################
+# sh似乎不支持在``中解析数组，所以这里额外处理一下pbs脚本。。。
+
+cat > test.pbs << EOF
+#!/bin/bash
+#PBS -N test
+#PBS -l nodes=1:ppn=16
+#PBS -q AM030_queue
+#PBS -j oe
+#################################################
+#  File Name: test.pbs
+#  
+#  Author: zhengdongjian@tju.edu.cn
+#  
+#  Created Time: Thu 12 May 2016 06:12:50 AM CST
+#  
+#################################################
+
+#================================================
+#生成可执行文件目录
+OBJDIR=build
+#数据文件夹
+DATDIR=data
+
+#串行程序名，源文件应为\${serial}.cpp
+serial=gauss
+#并行程序名，源文件应为\${parellel}.cpp
+parellel=gauss_mt
+#随机数生成器名，源文件\${gen}.cpp
+gen=generator
+
+#数据规模(gen x gen的行列式)
+max_data_size=11
+#数据范围(0~max-1的整数)
+gen_max=3
+#输入数据
+input=input.txt
+
+#最大核心数量
+max_core_size=16
+
+#输出重定向文件名
+of1=serial.out
+of2=parellel.out
+
+#运行次数
+if [ -z "\$total" ]; then
+    total=10
+fi
+#================================================/
+
+if [ "\$PBS_O_WORKDIR" != "" ]; then
+    cd \$PBS_O_WORKDIR
+fi
+
+# calculator = =
+calc() {
+    awk "BEGIN { print "\$*" }"
+}
+
+#运行程序
+#echo -e '\t>>> Serial Algorithm <<<' > \$of1
+#echo -e '\t>>> Parellel Algorithm <<<' > \$of2
+echo -n '' > \$of1
+echo -n '' > \$of2
+data_size=1
+while [ \$data_size -le \$max_data_size ]; do
+    #echo "data_size=\$data_size"
+    time_serial=0
+    j=0
+    while [ \$j -lt 5 ]; do
+        time_parellel[\$j]=0
+        j=\$((\$j+1))
+    done
+    i=1
+    \$OBJDIR/\$gen \$gen_max \$data_size > \$DATDIR/\$input
+    while [ \$i -le \$total ]; do
+        #echo -e '-------- Round '\$i' --------' >> \$of1
+        time_tmp=\`./\$OBJDIR/\$serial \$DATDIR/\$input\`
+        #echo "time_tmp_serial=\$time_tmp"
+        time_serial=\`calc \$time_serial+\$time_tmp\`
+        #echo '' >> \$of1
+        #echo '-------------------------------' >> \$of1
+
+        #echo -e '-------- Round '\$i' --------' >> \$of2
+EOF
+core_size=1
+j=0
+while [ $j -lt 5 ]; do
+    cat >> test.pbs << EOF
+        time_tmp=\`./\$OBJDIR/\$parellel \$DATDIR/\$input $core_size\`
+        time_parellel[$j]=\`calc \${time_parellel[$j]}+\$time_tmp\`
+EOF
+    j=$(($j + 1)) #j++
+    core_size=$(($core_size * 2)) #core_size <<= 1
+done
+cat >> test.pbs << EOF
+        #echo '' >> \$of2
+        #echo '-------------------------------' >> \$of2
+
+        i=\$((\$i + 1)) #i++
+    done
+    
+    time_serial=\`calc \$time_serial/\$total\`
+    echo "data_size=\$data_size; avg_time=\$time_serial us" >> \$of1
+    
+    j=0
+    while [ \$j -lt 5 ]; do
+        time_parellel[\$j]=\`calc \${time_parellel[\$j]}/\$total\`
+        echo "data_size=\$data_size; core_size=2^\$j; avg_time=\${time_parellel[\$j]} us" >> \$of2
+        j=\$((\$j + 1))
+    done
+    echo "" >> \$of2 #newline for parellel output
+    
+    data_size=\$((\$data_size + 1)) #data_size++
+done
+
+#cat /proc/cpuinfo
+EOF

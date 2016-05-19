@@ -1,0 +1,66 @@
+data_size=1; core_size=2^0; avg_time=244.6 us
+data_size=1; core_size=2^1; avg_time=229.8 us
+data_size=1; core_size=2^2; avg_time=252.1 us
+data_size=1; core_size=2^3; avg_time=258.4 us
+data_size=1; core_size=2^4; avg_time=237.8 us
+
+data_size=2; core_size=2^0; avg_time=230.9 us
+data_size=2; core_size=2^1; avg_time=263.5 us
+data_size=2; core_size=2^2; avg_time=247.3 us
+data_size=2; core_size=2^3; avg_time=245.3 us
+data_size=2; core_size=2^4; avg_time=249.6 us
+
+data_size=3; core_size=2^0; avg_time=232.1 us
+data_size=3; core_size=2^1; avg_time=249.2 us
+data_size=3; core_size=2^2; avg_time=322.4 us
+data_size=3; core_size=2^3; avg_time=439.2 us
+data_size=3; core_size=2^4; avg_time=422.6 us
+
+data_size=4; core_size=2^0; avg_time=236 us
+data_size=4; core_size=2^1; avg_time=257.6 us
+data_size=4; core_size=2^2; avg_time=315.9 us
+data_size=4; core_size=2^3; avg_time=509.4 us
+data_size=4; core_size=2^4; avg_time=882.3 us
+
+data_size=5; core_size=2^0; avg_time=248.3 us
+data_size=5; core_size=2^1; avg_time=260.7 us
+data_size=5; core_size=2^2; avg_time=333.7 us
+data_size=5; core_size=2^3; avg_time=525 us
+data_size=5; core_size=2^4; avg_time=896.2 us
+
+data_size=6; core_size=2^0; avg_time=384.2 us
+data_size=6; core_size=2^1; avg_time=335.3 us
+data_size=6; core_size=2^2; avg_time=385.7 us
+data_size=6; core_size=2^3; avg_time=565.8 us
+data_size=6; core_size=2^4; avg_time=890.3 us
+
+data_size=7; core_size=2^0; avg_time=1347.1 us
+data_size=7; core_size=2^1; avg_time=813.6 us
+data_size=7; core_size=2^2; avg_time=578.1 us
+data_size=7; core_size=2^3; avg_time=1016.9 us
+data_size=7; core_size=2^4; avg_time=1140.8 us
+
+data_size=8; core_size=2^0; avg_time=9973.4 us
+data_size=8; core_size=2^1; avg_time=5123.5 us
+data_size=8; core_size=2^2; avg_time=2727.6 us
+data_size=8; core_size=2^3; avg_time=3408.4 us
+data_size=8; core_size=2^4; avg_time=2865.8 us
+
+data_size=9; core_size=2^0; avg_time=63447.7 us
+data_size=9; core_size=2^1; avg_time=43436.5 us
+data_size=9; core_size=2^2; avg_time=24668.1 us
+data_size=9; core_size=2^3; avg_time=15500.1 us
+data_size=9; core_size=2^4; avg_time=11706.9 us
+
+data_size=10; core_size=2^0; avg_time=424525 us
+data_size=10; core_size=2^1; avg_time=225582 us
+data_size=10; core_size=2^2; avg_time=122658 us
+data_size=10; core_size=2^3; avg_time=94349.1 us
+data_size=10; core_size=2^4; avg_time=62762.8 us
+
+data_size=11; core_size=2^0; avg_time=5.39732e+06 us
+data_size=11; core_size=2^1; avg_time=2.7031e+06 us
+data_size=11; core_size=2^2; avg_time=1.37393e+06 us
+data_size=11; core_size=2^3; avg_time=719543 us
+data_size=11; core_size=2^4; avg_time=389008 us
+

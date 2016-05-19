@@ -1,0 +1,11 @@
+data_size=1; avg_time=62 us
+data_size=2; avg_time=60.4 us
+data_size=3; avg_time=61.8 us
+data_size=4; avg_time=61.8 us
+data_size=5; avg_time=81.7 us
+data_size=6; avg_time=193.6 us
+data_size=7; avg_time=1070.7 us
+data_size=8; avg_time=5051 us
+data_size=9; avg_time=34936.6 us
+data_size=10; avg_time=380796 us
+data_size=11; avg_time=5.14183e+06 us

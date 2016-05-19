@@ -39,14 +39,14 @@ const static int AR[MAX + 1] = {
 	362880, //9!
 	3628800, //10!
 	39916800 //11!
-};
+};//全排列数
 
-double det[MAX][MAX];
+double det[MAX][MAX]; //行列式
 int size; //runtime matrix size
 
-int seq[39916800 * MAX];
-int source[MAX];
-bool row_vis[MAX];
+int seq[39916800 * MAX]; //全排列
+int source[MAX]; //排列数暂存数组
+bool row_vis[MAX]; //排列生成时的标记
 int seq_size;
 
 /**
@@ -115,10 +115,10 @@ int main(int argc, char** argv) {
 #endif
     gettimeofday(&begin, NULL);
 #ifdef TEST
-    printf("result = %f\n", gauss(i)); /* 高斯消元 */
+    printf("result = %f\n", gauss(i));
 #else
-    fprintf(stderr, "result = %f\n", gauss(atoi(argv[2]))); /* 高斯消元 */
-    //printf("result = %f\n", gauss(atoi(argv[2])); /* 高斯消元 */
+    fprintf(stderr, "result = %f\n", gauss(atoi(argv[2])));
+    //printf("result = %f\n", gauss(atoi(argv[2]));
 #endif
 
     gettimeofday(&end, NULL);
@@ -227,7 +227,7 @@ double gauss(int num_thread) {
 	if (seq_size < total_threads) {
 		seq_size = total_threads;
 	}
-	//fix it
+	//fix threads_num
 	total_threads = num_thread;
 	total_threads = std::min(MAX_THREADS, total_threads);
 	total_threads = std::min(seq_size, total_threads);

@@ -79,16 +79,14 @@ while [ $data_size -le $max_data_size ]; do
         #echo '-------------------------------' >> $of1
 
         #echo -e '-------- Round '$i' --------' >> $of2
-        time_tmp=`./$OBJDIR/$parellel $DATDIR/$input 1`
-        time_parellel[0]=`calc ${time_parellel[0]}+$time_tmp`
-        time_tmp=`./$OBJDIR/$parellel $DATDIR/$input 2`
-        time_parellel[1]=`calc ${time_parellel[1]}+$time_tmp`
-        time_tmp=`./$OBJDIR/$parellel $DATDIR/$input 4`
-        time_parellel[2]=`calc ${time_parellel[2]}+$time_tmp`
-        time_tmp=`./$OBJDIR/$parellel $DATDIR/$input 8`
-        time_parellel[3]=`calc ${time_parellel[3]}+$time_tmp`
-        time_tmp=`./$OBJDIR/$parellel $DATDIR/$input 16`
-        time_parellel[4]=`calc ${time_parellel[4]}+$time_tmp`
+        core_size=1
+        j=0
+        while [ $core_size -le $max_core_size ]; do
+            time_tmp=`./$OBJDIR/$parellel $DATDIR/$input $core_size`
+            time_parellel[$j]=`calc ${time_parellel[$j]}+$time_tmp`
+            j=$(($j + 1)) #j++
+            core_size=$(($core_size * 2)) #core_size <<= 1
+        done
         #echo '' >> $of2
         #echo '-------------------------------' >> $of2
 
