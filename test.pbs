@@ -64,6 +64,7 @@ while [ $data_size -le $gen_size ]; do
     time_serial=0
     time_parellel=0
     i=1
+    $OBJDIR/$gen $gen_max $data_size > $DATDIR/$input
     while [ $i -le $total ]; do
         #echo -e '-------- Round '$i' --------' >> $of1
         time_serial=$(($time_serial + `./$OBJDIR/$serial $DATDIR/$input $of1`))
