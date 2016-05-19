@@ -24,7 +24,7 @@ enum ERROR {
 
 const int LINE_BUFFER_SIZE = 8192; /* each time read one line, with buffer 8k */
 const double EPS = 1e-6;
-const int MAX = 10; //max matrix size
+const int MAX = 11; //max matrix size
 const static int AR[MAX + 1] = {
 	1, //0!
 	1, //1!
@@ -36,14 +36,15 @@ const static int AR[MAX + 1] = {
 	5040,
 	40320,
 	362880, //9!
-	3628800 //10!
+	3628800, //10!
+	39916800 //11!
 };
 
 double det[MAX][MAX];
 int size; //runtime matrix size
 
 //int seq[AR[MAX]][MAX];
-int seq[3628800][MAX];
+int seq[39916800][MAX];
 int source[MAX];
 bool row_vis[MAX];
 int seq_size;
@@ -109,10 +110,11 @@ int main(int argc, char** argv) {
     generate();
     struct timeval begin, end;
     gettimeofday(&begin, NULL);
-    printf("result = %f\n", gauss()); /* 高斯消元 */
+    gauss(); //printf("result = %f\n", gauss()); /* 高斯消元 */
 
     gettimeofday(&end, NULL);
-    printf("time used: %.2f us\n", ((end.tv_sec - begin.tv_sec) * 1e6 + (end.tv_usec - begin.tv_usec)));
+    printf("%.2f\n", ((end.tv_sec - begin.tv_sec) * 1e6 + (end.tv_usec - begin.tv_usec)));
+    //printf("time used: %.2f us\n", ((end.tv_sec - begin.tv_sec) * 1e6 + (end.tv_usec - begin.tv_usec)));
 
     return 0;
 }

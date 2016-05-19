@@ -25,7 +25,7 @@ enum ERROR {
 
 const int LINE_BUFFER_SIZE = 8192; /* each time read one line, with buffer 8k */
 const double EPS = 1e-6;
-const int MAX = 10; //max matrix size
+const int MAX = 11; //max matrix size
 const static int AR[MAX + 1] = {
 	1, //0!
 	1, //1!
@@ -37,13 +37,14 @@ const static int AR[MAX + 1] = {
 	5040,
 	40320,
 	362880, //9!
-	3628800 //10!
+	3628800, //10!
+	39916800 //11!
 };
 
 double det[MAX][MAX];
 int size; //runtime matrix size
 
-int seq[3628800 * MAX];
+int seq[39916800 * MAX];
 int source[MAX];
 bool row_vis[MAX];
 int seq_size;
@@ -58,7 +59,7 @@ int input(const char* filename);
  * [Func]gauss
  * return: value of the det
  */
-double gauss(int num_thread = 12);
+double gauss(int num_thread = 16);
 
 /**
  * depth first search, get the number sequences
@@ -95,12 +96,12 @@ void generate() {
 }
 
 int main(int argc, char** argv) {
-    if (argc < 2) {
-        fprintf(stderr, "Usage: %s <input_file_name> [<output_file_name>].\n\n", argv[0]);
+    if (argc < 3) {
+        fprintf(stderr, "Usage: %s <input_file_name> <thread_num> [<output_file_name>].\n\n", argv[0]);
         exit(1);
     }
-    if (argc > 2) {
-        freopen(argv[2], "a", stdout);
+    if (argc > 3) {
+        freopen(argv[3], "a", stdout);
     }
 
     input(argv[1]);
@@ -116,11 +117,13 @@ int main(int argc, char** argv) {
 #ifdef TEST
     printf("result = %f\n", gauss(i)); /* 高斯消元 */
 #else
-    printf("result = %f\n", gauss()); /* 高斯消元 */
+    gauss(atoi(argv[2]));
+    //printf("result = %f\n", gauss(atoi(argv[2])); /* 高斯消元 */
 #endif
 
     gettimeofday(&end, NULL);
-    printf("time used: %.2f us\n", ((end.tv_sec - begin.tv_sec) * 1e6 + (end.tv_usec - begin.tv_usec)));
+    printf("%.2f\n", ((end.tv_sec - begin.tv_sec) * 1e6 + (end.tv_usec - begin.tv_usec)));
+    //printf("time used: %.2f us\n", ((end.tv_sec - begin.tv_sec) * 1e6 + (end.tv_usec - begin.tv_usec)));
 #ifdef TEST
 	}
 #endif
@@ -187,7 +190,7 @@ inline int pow1(int n) {
 /**
  * data struct for parellel computing
  */
-const int MAX_THREADS = 128;
+const int MAX_THREADS = 32;
 pthread_t threads[MAX_THREADS];
 int ids[MAX_THREADS]; //tell the specific thread his ID
 double res; //temporary parellel result array

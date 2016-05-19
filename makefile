@@ -17,11 +17,14 @@ parellel=gauss_mt
 gen=generator
 
 #数据规模(gen x gen的行列式)
-gen_size=10
+gen_size=11
 #数据范围(0~max-1的整数)
 gen_max=3
 #产生的数据文件名
 gen_out=input.txt
+
+#核心数量
+core_size=16
 
 default: prepare gen serial parellel
 	@echo 'Done!'
@@ -60,10 +63,10 @@ generate: ${OBJDIR}/${gen}
 	@sleep 0.3
 
 test:
-	@echo -e 'Serial<<<'
+	@echo -e '>>>Serial<<<'
 	./${OBJDIR}/${serial} ${DATDIR}/${gen_out}
-	@echo -e 'Parellel<<<'
-	./${OBJDIR}/${parellel} ${DATDIR}/${gen_out}
+	@echo -e '>>>Parellel<<<'
+	./${OBJDIR}/${parellel} ${DATDIR}/${gen_out} ${core_size}
 	@echo -e '---------------------'
 
 clean:
