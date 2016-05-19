@@ -36,7 +36,10 @@ if [ -z "$total" ]; then
 fi
 #================================================/
 
-cd $PBS_O_WORKDIR
+qstat > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+    cd $PBS_O_WORKDIR
+fi
 
 #运行程序
 echo -e '\t>>> Serial Algorithm <<<' > $of1
