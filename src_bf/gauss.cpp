@@ -11,9 +11,12 @@
 #include <sys/time.h>
 using namespace std;
 
+//#define DEBUG
+
 /**
- * !!!
- * complex: O(n^n)
+ * !!!!!!
+ *	complex: O(n^n)
+ * !!!!!!
  */
 enum ERROR {
     DATA_BUFFER_OVERFLOW = 1
@@ -21,26 +24,26 @@ enum ERROR {
 
 const int LINE_BUFFER_SIZE = 8192; /* each time read one line, with buffer 8k */
 const double EPS = 1e-6;
-const int MAX = 9; //max matrix size
+const int MAX = 10; //max matrix size
 const static int AR[MAX + 1] = {
 	1, //0!
 	1, //1!
 	2, //2!
-	6,
+	6, //3!
 	24,
 	120,
-	720,
+	720, //6!
 	5040,
 	40320,
-	362880/*,
-	3628800*/
+	362880, //9!
+	3628800 //10!
 };
 
 double det[MAX][MAX];
 int size; //runtime matrix size
 
 //int seq[AR[MAX]][MAX];
-int seq[362880][MAX];
+int seq[3628800][MAX];
 int source[MAX];
 bool row_vis[MAX];
 int seq_size;
@@ -102,10 +105,10 @@ int main(int argc, char** argv) {
 
     input(argv[1]);
 
-    struct timeval begin, end;
-    gettimeofday(&begin, NULL);
     //generate sequences
     generate();
+    struct timeval begin, end;
+    gettimeofday(&begin, NULL);
     printf("result = %f\n", gauss()); /* 高斯消元 */
 
     gettimeofday(&end, NULL);
@@ -115,6 +118,8 @@ int main(int argc, char** argv) {
 }
 
 int input(const char* filename) {
+	//printf("open file %s\n", filename);
+	fflush(stdout);
     FILE* file = fopen(filename, "r");
     if (file == NULL) {
         fprintf(stderr, "open file %s failed!\n", filename);
@@ -128,6 +133,7 @@ int input(const char* filename) {
     size = 0;
     while (fgets(buffer, LINE_BUFFER_SIZE, file) != NULL) {
         if (size > MAX) {
+			fprintf(stderr, "buffer overflow\n");
             return -1;
             //throw DATA_BUFFER_OVERFLOW;
         }
@@ -176,8 +182,10 @@ double gauss() {
         tmp = pow1(i);
         for (int j = 0; j < size; ++j) {
             tmp *= det[j][seq[i][j]];
+			//printf("%d ", seq[i][j]);
         }
         res += tmp;
+		//printf(" => res += %f\n", tmp);fflush(stdout);
     }
     return res;
 }

@@ -21,27 +21,29 @@ enum ERROR {
     DATA_BUFFER_OVERFLOW = 1
 };
 
+//#define TEST
+
 const int LINE_BUFFER_SIZE = 8192; /* each time read one line, with buffer 8k */
 const double EPS = 1e-6;
-const int MAX = 9; //max matrix size
+const int MAX = 10; //max matrix size
 const static int AR[MAX + 1] = {
 	1, //0!
 	1, //1!
 	2, //2!
-	6,
+	6, //3!
 	24,
 	120,
-	720,
+	720, //6!
 	5040,
 	40320,
-	362880/*,
-	3628800*/
+	362880, //9!
+	3628800 //10!
 };
 
 double det[MAX][MAX];
 int size; //runtime matrix size
 
-int seq[362880 * MAX];
+int seq[3628800 * MAX];
 int source[MAX];
 bool row_vis[MAX];
 int seq_size;
@@ -56,7 +58,7 @@ int input(const char* filename);
  * [Func]gauss
  * return: value of the det
  */
-double gauss();
+double gauss(int num_thread = 128);
 
 /**
  * depth first search, get the number sequences
@@ -94,7 +96,7 @@ void generate() {
 
 int main(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: %s <input_file_name> <output_file_name>\nor\t%s <input_file_name>\n\n", argv[0], argv[0]);
+        fprintf(stderr, "Usage: %s <input_file_name> [<output_file_name>].\n\n", argv[0]);
         exit(1);
     }
     if (argc > 2) {
@@ -103,14 +105,25 @@ int main(int argc, char** argv) {
 
     input(argv[1]);
 
-    struct timeval begin, end;
-    gettimeofday(&begin, NULL);
     //generate sequences
     generate();
+    struct timeval begin, end;
+#ifdef TEST
+	for (int i = 1; i <= 128; i <<= 1) {
+		printf("num_thread = %d\n", i);
+#endif
+    gettimeofday(&begin, NULL);
+#ifdef TEST
+    printf("result = %f\n", gauss(i)); /* 高斯消元 */
+#else
     printf("result = %f\n", gauss()); /* 高斯消元 */
+#endif
 
     gettimeofday(&end, NULL);
     printf("time used: %.2f us\n", ((end.tv_sec - begin.tv_sec) * 1e6 + (end.tv_usec - begin.tv_usec)));
+#ifdef TEST
+	}
+#endif
 
     return 0;
 }
@@ -193,7 +206,7 @@ void* work(void* id) {
 	double my_res = 0;
 	while (start++ < end) {
 		//do with seq_{start}
-		double tmp = 1.0;
+		double tmp = pow1(start);
 		for (int j = 0; j < size; ++j) {
 			tmp *= det[j][seq[start * MAX + j]];
 		}
@@ -206,16 +219,18 @@ void* work(void* id) {
 	return NULL;
 }
 
-double gauss() {
+double gauss(int num_thread) {
 	/* decide how much threads to work */
 	if (seq_size < total_threads) {
 		seq_size = total_threads;
 	}
 	//fix it
-	total_threads = 32;
+	total_threads = num_thread;
 	total_threads = std::min(MAX_THREADS, total_threads);
+	total_threads = std::min(seq_size, total_threads);
 	total_of_each = (seq_size + total_threads - 1) / total_threads;
 	res = 0.0;
+	sem_init(&lock, 0, 1); //init with value of 1, and shared
     for (int i = 0; i < total_threads; ++i) {
 		ids[i] = i;
 		pthread_create(threads + i, NULL, work, (void*)(ids + i));
